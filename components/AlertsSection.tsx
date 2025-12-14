@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, Alert, ScrollView } from 'react-native';
 import { AlertTriangle, TrendingUp, TrendingDown } from 'lucide-react-native';
 
 const ESP32_IP = "http://192.168.1.1";
@@ -145,8 +145,13 @@ export function AlertsSection() {
     );
   };
 
-  return (
-    <View>
+ return (
+    // CAMBIO 1: ScrollView principal
+    <ScrollView 
+      style={styles.scrollView}
+      contentContainerStyle={styles.scrollContent}
+      showsVerticalScrollIndicator={false}
+    >
       <Text style={styles.header}>Alertas Recientes</Text>
       
       <View style={styles.infoBox}>
@@ -164,7 +169,7 @@ export function AlertsSection() {
         >
           <TrendingUp color="white" size={20} />
           <Text style={styles.buttonText}>
-            {loading ? "Enviando..." : "Alerta Alta"}
+            {loading ? "..." : "Alerta Alta"}
           </Text>
         </TouchableOpacity>
 
@@ -175,22 +180,34 @@ export function AlertsSection() {
         >
           <TrendingDown color="white" size={20} />
           <Text style={styles.buttonText}>
-            {loading ? "Enviando..." : "Alerta Baja"}
+            {loading ? "..." : "Alerta Baja"}
           </Text>
         </TouchableOpacity>
       </View>
 
-      <FlatList
-        data={alertsData}
-        renderItem={({ item }) => <AlertItem item={item} />}
-        keyExtractor={(item) => item.id}
-        contentContainerStyle={styles.listContainer}
-      />
-    </View>
+      {/* CAMBIO 2: .map() en lugar de FlatList */}
+      <View style={styles.listContainer}>
+        {alertsData.map((item) => (
+          <View key={item.id}>
+            <AlertItem item={item} />
+          </View>
+        ))}
+      </View>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
+  scrollView: {
+    width: '100%',
+    // Sin backgroundColor, será transparente o el del padre
+  },
+  scrollContent: {
+    paddingHorizontal: 16,
+    paddingTop: 16,
+    paddingBottom: 100, // Espacio al final para scroll
+    flexGrow: 1,
+  },
   header: {
     fontSize: 20,
     fontWeight: 'bold',
