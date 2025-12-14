@@ -1,6 +1,6 @@
 import { Droplet, Plus, TrendingUp } from 'lucide-react-native';
 import React, { useState } from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View, ScrollView } from 'react-native'; // <--- CAMBIO
 
 const ESP32_IP = "http://192.168.1.1";
 
@@ -124,7 +124,10 @@ export function MonitoringSection() {
   }
 
   return (
-    <View style={styles.container}>
+   <ScrollView 
+      contentContainerStyle={styles.scrollContainer} 
+      showsVerticalScrollIndicator={false}
+    > 
       {/* Glucosa actual */}
       <View style={styles.card}>
         <View style={styles.cardHeader}>
@@ -158,7 +161,10 @@ export function MonitoringSection() {
         </View>
 
         <View style={{ gap: 12 }}>
-          {history.slice(0, 5).map((item, idx) => (
+          {/* NOTA: Aquí tienes un .slice(0, 5). Si quieres ver toda la lista
+             cuando crezca, quita el .slice(0, 5) o aumenta el número.
+          */}
+          {history.map((item, idx) => (
             <View key={idx} style={styles.historyItem}>
               <View>
                 <Text style={styles.historyValue}>{item.value} mg/dL</Text>
@@ -207,12 +213,21 @@ export function MonitoringSection() {
           {isMeasuring ? "Midiendo..." : "Simulación Local"}
         </Text>
       </TouchableOpacity>
-    </View>
+      
+      {/* Un pequeño espacio extra al final para que el botón no toque el borde */}
+      <View style={{ height: 20 }} /> 
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { gap: 24 },
+  // Renombré container a scrollContainer para ser más claro,
+  // y agregué paddingVertical para que no toque los bordes superior/inferior al scrollear
+  scrollContainer: { 
+    gap: 24,
+    paddingVertical: 10, 
+    paddingHorizontal: 5 // Opcional si quieres margen a los lados
+  },
   card: {
     backgroundColor: 'white',
     borderRadius: 12,
@@ -220,9 +235,9 @@ const styles = StyleSheet.create({
     gap: 12,
     elevation: 2,
   },
+  // ... resto de estilos igual ...
   cardHeader: { flexDirection: 'row', alignItems: 'center', gap: 8 },
   cardTitle: { fontSize: 16, fontWeight: '600', color: '#374151' },
-
   glucoseReading: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -232,10 +247,8 @@ const styles = StyleSheet.create({
   },
   glucoseValue: { fontSize: 48, fontWeight: 'bold', color: '#1f2937' },
   glucoseUnit: { fontSize: 16, fontWeight: '500', color: '#6b7280' },
-
   measuringText: { fontSize: 28, fontWeight: '700', color: '#6b7280' },
   glucoseStatus: { textAlign: 'center', fontWeight: '600' },
-
   historyItem: {
     padding: 12,
     backgroundColor: '#f9fafb',
@@ -246,14 +259,12 @@ const styles = StyleSheet.create({
   },
   historyValue: { fontSize: 18, fontWeight: '600', color: '#1f2937' },
   historyDate: { fontSize: 14, color: '#6b7280', marginTop: 4 },
-
   statusBadge: {
     paddingVertical: 6,
     paddingHorizontal: 12,
     borderRadius: 20,
   },
   statusBadgeText: { fontSize: 14, fontWeight: '600' },
-
   addButton: {
     flexDirection: 'row',
     justifyContent: 'center',
