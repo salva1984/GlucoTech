@@ -137,7 +137,7 @@ export function RemindersSection() {
 
       <View style={styles.infoBox}>
         <Text style={styles.infoText}>
-          Los recordatorios se mostrarán en la pantalla del ESP32.
+          Los recordatorios se mostrarán en la pantalla de la pulsera.
         </Text>
       </View>
 

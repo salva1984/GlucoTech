@@ -140,6 +140,8 @@ export function MonitoringSection() {
       <ScrollView
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
+        directionalLockEnabled={true}
+        keyboardShouldPersistTaps='handled'
       >
         {/* Tarjeta Glucosa */}
         <View style={styles.card}>
@@ -169,7 +171,7 @@ export function MonitoringSection() {
           onPress={obtenerGlucosaESP32}
         >
           <Droplet color="white" size={20} />
-          <Text style={styles.addButtonText}>Medir desde ESP32</Text>
+          <Text style={styles.addButtonText}>Medir desde pulsera</Text>
         </TouchableOpacity>
 
         <TouchableOpacity

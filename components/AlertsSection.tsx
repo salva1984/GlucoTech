@@ -156,7 +156,7 @@ export function AlertsSection() {
       
       <View style={styles.infoBox}>
         <Text style={styles.infoText}>
-          Simula alertas desde el ESP32. El dispositivo mostrará la alerta en su pantalla y la enviará a la app.
+          Simula alertas desde la pulsera. El dispositivo mostrará la alerta en su pantalla y la enviará a la app.
         </Text>
       </View>
 
