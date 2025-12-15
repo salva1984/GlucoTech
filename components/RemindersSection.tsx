@@ -16,9 +16,9 @@ import { Pill, Droplet, Plus, Trash2, Edit3, Send } from 'lucide-react-native';
 const ESP32_IP = "http://192.168.1.1";
 
 const initialReminders = [
-  { id: '1', type: 'medication', title: 'Tomar Metformina', time: '8:00 AM', enabled: true },
-  { id: '2', type: 'measurement', title: 'Medir glucosa (antes de almorzar)', time: '1:30 PM', enabled: true },
-  { id: '3', type: 'medication', title: 'Tomar Metformina', time: '8:00 PM', enabled: false },
+  { id: '1', type: 'medication', title: 'Tomar Metformina', time: '08:00', enabled: true },
+  { id: '2', type: 'measurement', title: 'Medir glucosa (antes de almorzar)', time: '13:30', enabled: true },
+  { id: '3', type: 'medication', title: 'Tomar Metformina', time: '20:00', enabled: false },
 ];
 
 const ReminderIcon = ({ type }: { type: string }) => {
@@ -79,6 +79,17 @@ export function RemindersSection() {
       Alert.alert('Campos vacíos', 'Por favor completa todos los campos');
       return;
     }
+    
+    // Validar formato de hora 24h (HH:MM)
+    const timeRegex = /^([0-1][0-9]|2[0-3]):([0-5][0-9])$/;
+    if (!timeRegex.test(formTime.trim())) {
+      Alert.alert(
+        'Formato incorrecto', 
+        'Por favor ingresa la hora en formato 24h\n\nEjemplos válidos:\n• 08:00\n• 14:30\n• 23:45'
+      );
+      return;
+    }
+    
     if (editingReminder) {
       setReminders(reminders.map(r => r.id === editingReminder.id ? { ...r, title: formTitle, time: formTime, type: formType } : r));
     } else {
@@ -137,7 +148,7 @@ export function RemindersSection() {
 
       <View style={styles.infoBox}>
         <Text style={styles.infoText}>
-          Los recordatorios se mostrarán en la pantalla de la pulsera.
+          Los recordatorios se mostrarán en la pantalla del ESP32.
         </Text>
       </View>
 
@@ -174,8 +185,24 @@ export function RemindersSection() {
             <Text style={styles.modalTitle}>
               {editingReminder ? "Editar Recordatorio" : "Nuevo Recordatorio"}
             </Text>
-            <TextInput placeholder="Título" style={styles.input} value={formTitle} onChangeText={setFormTitle} />
-            <TextInput placeholder="Hora" style={styles.input} value={formTime} onChangeText={setFormTime} />
+            <TextInput 
+              placeholder="Título" 
+              style={styles.input} 
+              value={formTitle} 
+              onChangeText={setFormTitle} 
+            />
+            <TextInput 
+              placeholder="Hora (ej: 14:30)" 
+              style={styles.input} 
+              value={formTime} 
+              onChangeText={setFormTime}
+              keyboardType="numbers-and-punctuation"
+              maxLength={5}
+              autoCapitalize="none"
+            />
+            <Text style={styles.helpText}>
+              Formato 24 horas (Ejemplo: 08:00, 14:30, 23:45)
+            </Text>
 
             <View style={styles.typeSelector}>
               <TouchableOpacity style={[styles.typeButton, formType === 'medication' && styles.typeButtonActive]} onPress={() => setFormType('medication')}>
@@ -229,11 +256,18 @@ const styles = StyleSheet.create({
   addButton: { backgroundColor: '#16a34a', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', paddingVertical: 14, borderRadius: 12, margin: 20, gap: 8, elevation: 2 },
   addButtonText: { color: 'white', fontWeight: 'bold', fontSize: 15 },
 
-  // Estilos del Modal (Sin cambios)
+  // Estilos del Modal
   modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'flex-end' },
   modalContent: { backgroundColor: 'white', padding: 20, borderTopRightRadius: 20, borderTopLeftRadius: 20, gap: 12 },
   modalTitle: { fontSize: 18, fontWeight: 'bold', marginBottom: 8 },
   input: { backgroundColor: '#f3f4f6', borderRadius: 10, padding: 12, fontSize: 16 },
+  helpText: { 
+    fontSize: 12, 
+    color: '#6b7280', 
+    marginTop: -8, 
+    marginBottom: 4,
+    fontStyle: 'italic' 
+  },
   typeSelector: { flexDirection: 'row', gap: 12, marginVertical: 8 },
   typeButton: { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', padding: 12, borderRadius: 10, backgroundColor: '#f3f4f6', gap: 8 },
   typeButtonActive: { backgroundColor: '#e0e7ff', borderWidth: 2, borderColor: '#818cf8' },
